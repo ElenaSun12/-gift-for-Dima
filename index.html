@@ -7,42 +7,75 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-
-      /* Градиентный фон: от нежно-зелёного к тёмно-зелёному */
-      background: linear-gradient(to bottom, #d0f0c0 0%, #a8e6a1 40%, #4caf50 70%, #1b5e20 100%);
-
-      /* Крупные ёлочные ветви с шишками */
-      background-image:
-        url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="220" height="440" viewBox="0 0 220 440"><g transform="translate(110,220) scale(2.1)"><g fill="%232E7D32"><polygon points="0,0 -35,-50 0,-40 35,-50"/><polygon points="0,-40 -30,-90 0,-80 30,-90"/><polygon points="0,-80 -25,-130 0,-120 25,-130"/></g><g fill="%234E342E"><polygon points="-20,-60 -15,-85 -25,-85"/><polygon points="22,-100 17,-125 27,-125"/><polygon points="0,-135 -5,-160 5,-160"/></g></g></svg>'),
-        url('image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="220" height="440" viewBox="0 0 220 440"><g transform="translate(110,220) scale(2.1) rotate(180)"><g fill="%23388E3C"><polygon points="0,0 -35,-50 0,-40 35,-50"/><polygon points="0,-40 -30,-90 0,-80 30,-90"/><polygon points="0,-80 -25,-130 0,-120 25,-130"/></g><g fill="%235D4037"><polygon points="-20,-60 -15,-85 -25,-85"/><polygon points="22,-100 17,-125 27,-125"/><polygon points="0,-135 -5,-160 5,-160"/></g></g></svg>');
-
-      background-repeat: no-repeat, no-repeat;
-      background-position: left 10px center, right 10px center;
-      background-size: 200px auto, 200px auto;
-
-      color: #2e2e2e;
+      /* СПЛОШНОЙ ФОН — цвет #002f55 */
+      background-color: #002f55;
+      color: #fff;
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow-x: hidden;
       position: relative;
+      overflow-x: hidden;
     }
 
+    /* === ВЕРХНИЙ ДЕКОР — СНЕЖИНКИ И ЗВЁЗДЫ === */
+    .top-decoration {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 300px;
+      pointer-events: none;
+      z-index: 5;
+      overflow: hidden;
+    }
+
+    .snowflake-top {
+      position: absolute;
+      color: #ffffff;
+      font-size: 1.8em;
+      opacity: 0.9;
+      animation: twinkle 3s ease-in-out infinite;
+    }
+    .star-top {
+      position: absolute;
+      color: #ffffff;
+      font-size: 1.2em;
+      opacity: 0.8;
+    }
+    .glow {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.7; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0.7; transform: scale(0.9); }
+    }
+    @keyframes glow {
+      from { box-shadow: 0 0 10px rgba(255, 255, 255, 0.6); }
+      to { box-shadow: 0 0 20px rgba(255, 255, 255, 0.9); }
+    }
+
+    /* === КОНТЕЙНЕР С ТЕКСТОМ === */
     .container {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(4px);
-      color: #1a1a1a;
-      line-height: 1.6;
-      max-width: 820px;
-      width: 94%;
+      max-width: 800px;
+      width: 90%;
+      margin: 120px auto 60px;
       padding: 36px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(4px);
       border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       position: relative;
       z-index: 10;
+      color: #1a1a1a;
+      line-height: 1.6;
     }
 
     h1 {
@@ -84,7 +117,6 @@
       pointer-events: none;
       z-index: 1;
     }
-
     .snowflake {
       position: absolute;
       color: #ffffff;
@@ -93,16 +125,17 @@
       top: -20px;
       animation: fall linear infinite;
     }
-
     @keyframes fall {
-      to {
-        transform: translateY(105vh) rotate(360deg);
-      }
+      to { transform: translateY(105vh) rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
+  <!-- Верхний декор — снежинки и звезды -->
+  <div class="top-decoration" id="top-decoration"></div>
+
+  <!-- Основной контент -->
   <div class="container">
     <h1>Дима, поздравляем с Новым 2026 годом! 🎉</h1>
 
@@ -133,11 +166,45 @@
 
     <img src="images/dima1.jpeg" alt="Фото для Димы!">
   </div>
+  
 
-  <!-- Снежинки -->
+  <!-- Падающие снежинки -->
   <div class="snowflakes" id="snowflakes"></div>
 
   <script>
+    // Генерация верхнего декора (снежинки и звёзды)
+    const topDeco = document.getElementById('top-decoration');
+    for (let i = 0; i < 25; i++) {
+      const snowflake = document.createElement('div');
+      snowflake.className = 'snowflake-top';
+      snowflake.textContent = '❄';
+      snowflake.style.left = Math.random() * 100 + 'vw';
+      snowflake.style.top = Math.random() * 150 + 'px';
+      snowflake.style.fontSize = (1.2 + Math.random() * 1.5) + 'em';
+      snowflake.style.animationDelay = Math.random() * 3 + 's';
+      topDeco.appendChild(snowflake);
+
+      if (Math.random() > 0.5) {
+        const star = document.createElement('div');
+        star.className = 'star-top';
+        star.textContent = '★';
+        star.style.left = Math.random() * 100 + 'vw';
+        star.style.top = Math.random() * 150 + 'px';
+        star.style.fontSize = (0.8 + Math.random() * 1.2) + 'em';
+        topDeco.appendChild(star);
+      }
+
+      if (Math.random() > 0.7) {
+        const glow = document.createElement('div');
+        glow.className = 'glow';
+        glow.style.left = Math.random() * 100 + 'vw';
+        glow.style.top = Math.random() * 150 + 'px';
+        glow.style.animationDelay = Math.random() * 2 + 's';
+        topDeco.appendChild(glow);
+      }
+    }
+
+    // Падающие снежинки
     const container = document.getElementById('snowflakes');
     const count = 35;
     for (let i = 0; i < count; i++) {
